@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Course Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+<div class="container">
+<h1 th:text="${pageTitle}">Course Form</h1>
+
+<form th:action="@{/courses/save}" th:object="${course}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" />
+        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-message"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" th:field="*{description}" rows="4"></textarea>
+        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-message"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="number" step="0.01" id="price" th:field="*{price}" />
+        <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-message"></span>
+    </div>
+
+    <!-- Instructor Selection Dropdown -->
+    <div class="form-group">
+        <label for="instructorId">Instructor:</label>
+        <select id="instructorId" th:field="*{instructorId}">
+            <option value="">-- Select an Instructor --</option>
+            <option th:each="instructor : ${allInstructors}"
+                    th:value="${instructor.id}"
+                    th:text="${instructor.firstName + ' ' + instructor.lastName}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('instructorId')}" th:errors="*{instructorId}" class="error-message"></span>
+    </div>
+
+    <div class="actions">
+        <button type="submit">Save Course</button>
+        <a th:href="@{/courses}">Cancel</a>
+    </div>
+</form>
+</div>
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+</body>
+</html>

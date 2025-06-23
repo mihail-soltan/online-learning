@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Courses List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+<div class="container">
+<h1>Courses</h1>
+
+<div th:if="${message}" class="message success" th:text="${message}"></div>
+<div th:if="${error_message}" class="message error" th:text="${error_message}"></div>
+
+<p sec:authorize="hasAnyRole('INSTRUCTOR', 'ADMIN')"><a th:href="@{/courses/new}">Add New Course</a></p>
+
+<div th:if="${coursePage.hasContent()}">
+    <table>
+        <thead>
+        <tr>
+            <th><a th:href="@{/courses(size=${coursePage.size}, sortField='id', sortDir=${sortField == 'id' ? reverseSortDir : 'asc'})}">ID</a></th>
+            <th><a th:href="@{/courses(size=${coursePage.size}, sortField='title', sortDir=${sortField == 'title' ? reverseSortDir : 'asc'})}">Title</a></th>
+            <th>Description</th>
+            <th><a th:href="@{/courses(size=${coursePage.size}, sortField='price', sortDir=${sortField == 'price' ? reverseSortDir : 'asc'})}">Price</a></th>
+            <th>Instructor</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${coursePage.content}">
+            <td th:text="${course.id}"></td>
+            <td th:text="${course.title}"></td>
+            <td th:text="${#strings.abbreviate(course.description, 50)}"></td>
+            <td th:text="${'$' + #numbers.formatDecimal(course.price, 1, 2)}"></td>
+            <td th:text="${course.instructorName}"></td>
+            <td class="actions"  sec:authorize="hasAnyRole('INSTRUCTOR', 'ADMIN')">
+                <a th:href="@{/courses/{id}/modules(id=${course.id})}">Modules</a>
+                <a th:href="@{/courses/edit/{id}(id=${course.id})}">Edit</a>
+                <a th:href="@{/courses/delete/{id}(id=${course.id})}"
+                   onclick="return confirm('Are you sure you want to delete this course?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination" th:if="${coursePage.totalPages > 1}">
+        <span>Pages:</span>
+        <span th:each="i : ${#numbers.sequence(0, coursePage.totalPages - 1)}">
+                <a th:if="${coursePage.number != i}"
+                   th:href="@{/courses(page=${i}, size=${coursePage.size}, sortField=${sortField}, sortDir=${sortDir})}"
+                   th:text="${i + 1}"></a>
+                <span th:if="${coursePage.number == i}" th:text="${i + 1}" style="font-weight:bold;"></span>
+            </span>
+    </div>
+
+</div>
+<div th:if="${!coursePage.hasContent()}">
+    <p>No courses found.</p>
+</div>
+</div>
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+</body>
+</html>

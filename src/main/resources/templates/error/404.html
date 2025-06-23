@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - Page Not Found</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+
+<div class="container">
+    <h1>Oops! Page Not Found (404)</h1>
+    <p th:if="${errorMessage}" th:text="${errorMessage}">The page you are looking for could not be found.</p>
+    <p th:if="${url}">Requested URL: <span th:text="${url}"></span></p>
+
+    <p><a th:href="@{/}">Go to Homepage</a></p>
+
+    <!-- For development/debugging - remove for production -->
+    <div th:if="${exception != null and #strings.contains(#httpServletRequest.getRemoteAddr(), '127.0.0.1')}">
+        <hr/>
+        <h4>Developer Details:</h4>
+        <p th:text="${exception.message}"></p>
+        <!-- <pre th:text="${exception.getStackTrace()}"></pre> -->
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+</body>
+</html>

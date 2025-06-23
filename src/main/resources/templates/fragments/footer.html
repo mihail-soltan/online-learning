@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<footer th:fragment="page_footer" class="footer">
+    <p>© <span th:text="${#dates.year(#dates.createNow())}">2024</span> Online Learning Platform. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

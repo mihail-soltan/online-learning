@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Error</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+
+<div class="container">
+    <h1>An Error Occurred</h1>
+    <p th:if="${errorMessage}" th:text="${errorMessage}">Sorry, something went wrong.</p>
+    <p th:if="${url}">At URL: <span th:text="${url}"></span></p>
+    <p th:if="${exceptionType}">Error Type: <span th:text="${exceptionType}"></span></p>
+
+    <p><a th:href="@{/}">Go to Homepage</a></p>
+
+    <!-- For development/debugging - remove for production -->
+    <div th:if="${#strings.contains(#httpServletRequest.getRemoteAddr(), '127.0.0.1') and exceptionType != null}">
+        <hr/>
+        <h4>Developer Details (if available):</h4>
+        <!-- You might pass more details for dev mode -->
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+</body>
+</html>

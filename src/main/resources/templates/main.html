@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Online Learning Platform</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+<div class="container">
+<h1>Welcome to the Online Learning Platform!</h1>
+
+<p>This is the main landing page.</p>
+
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+  <p>Welcome, Admin! <a href="#">Admin Dashboard</a></p>
+</div>
+<div sec:authorize="hasRole('ROLE_INSTRUCTOR')">
+  <p>Welcome, Instructor! <a href="#">Your Courses</a></p>
+</div>
+<div sec:authorize="hasRole('ROLE_STUDENT')">
+  <p>Welcome, Student! <a href="#">My Enrollments</a></p>
+</div>
+</div>
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+</body>
+</html>

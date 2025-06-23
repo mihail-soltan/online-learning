@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructors List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+
+<div class="container">
+<h1>Instructors</h1>
+
+
+<div th:if="${message}" class="message success" th:text="${message}"></div>
+<div th:if="${error_message}" class="message error" th:text="${error_message}"></div>
+
+    <p sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/instructors/new}" class="btn btn-primary">Add New Instructor</a>
+    </p>
+
+<div th:if="${instructorPage.hasContent()}">
+    <table>
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/instructors(size=${instructorPage.size}, sortField='id', sortDir=${sortField == 'id' && sortDir == 'asc' ? 'desc' : 'asc'})}">ID</a>
+            </th>
+            <th>
+                <a th:href="@{/instructors(size=${instructorPage.size}, sortField='firstName', sortDir=${sortField == 'firstName' && sortDir == 'asc' ? 'desc' : 'asc'})}">First Name</a>
+            </th>
+            <th>
+                <a th:href="@{/instructors(size=${instructorPage.size}, sortField='lastName', sortDir=${sortField == 'lastName' && sortDir == 'asc' ? 'desc' : 'asc'})}">Last Name</a>
+            </th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="instructor : ${instructorPage.content}">
+            <td th:text="${instructor.id}"></td>
+            <td th:text="${instructor.firstName}"></td>
+            <td th:text="${instructor.lastName}"></td>
+            <td th:text="${instructor.email}"></td>
+            <td class="actions" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/instructors/edit/{id}(id=${instructor.id})}">Edit</a>
+                <a th:href="@{/instructors/delete/{id}(id=${instructor.id})}"
+                   onclick="return confirm('Are you sure you want to delete this instructor?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination" th:if="${instructorPage.totalPages > 1}">
+        <span>Pages:</span>
+        <span th:each="i : ${#numbers.sequence(0, instructorPage.totalPages - 1)}">
+                <a th:if="${instructorPage.number != i}"
+                   th:href="@{/instructors(page=${i}, size=${instructorPage.size}, sortField=${sortField}, sortDir=${sortDir})}"
+                   th:text="${i + 1}"></a>
+                <span th:if="${instructorPage.number == i}" th:text="${i + 1}" style="font-weight:bold;"></span>
+            </span>
+        <br/>
+        <span>
+                Items [[${instructorPage.number * instructorPage.size + 1}]]- [[${instructorPage.number * instructorPage.size + instructorPage.numberOfElements}]]
+                of [[${instructorPage.totalElements}]]
+            </span>
+    </div>
+
+</div>
+<div th:if="${!instructorPage.hasContent()}">
+    <p>No instructors found.</p>
+</div>
+
+</div>
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+
+</body>
+</html>

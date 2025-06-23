@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Students List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navbar}"></div>
+<div class="container">
+<h1>Students</h1>
+
+<div th:if="${message}" class="message success" th:text="${message}"></div>
+<div th:if="${error_message}" class="message error" th:text="${error_message}"></div>
+
+<p sec:authorize="hasRole('ADMIN')"><a th:href="@{/students/new}">Add New Student</a></p>
+
+<div th:if="${studentPage.hasContent()}">
+    <table>
+        <thead>
+        <tr>
+            <th><a th:href="@{/students(size=${studentPage.size}, sortField='id', sortDir=${sortField == 'id' ? reverseSortDir : 'asc'})}">ID</a></th>
+            <th><a th:href="@{/students(size=${studentPage.size}, sortField='firstName', sortDir=${sortField == 'firstName' ? reverseSortDir : 'asc'})}">First Name</a></th>
+            <th><a th:href="@{/students(size=${studentPage.size}, sortField='lastName', sortDir=${sortField == 'lastName' ? reverseSortDir : 'asc'})}">Last Name</a></th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${studentPage.content}">
+            <td th:text="${student.id}"></td>
+            <td th:text="${student.firstName}"></td>
+            <td th:text="${student.lastName}"></td>
+            <td th:text="${student.email}"></td>
+            <td class="actions" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/students/edit/{id}(id=${student.id})}">Edit</a>
+                <a th:href="@{/students/delete/{id}(id=${student.id})}"
+                   onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${studentPage.totalPages > 1}">
+        <span>Pages:</span>
+        <span th:each="i : ${#numbers.sequence(0, studentPage.totalPages - 1)}">
+            <a th:if="${studentPage.number != i}"
+               th:href="@{/students(page=${i}, size=${studentPage.size}, sortField=${sortField}, sortDir=${sortDir})}"
+               th:text="${i + 1}"></a>
+            <span th:if="${studentPage.number == i}" th:text="${i + 1}" style="font-weight:bold;"></span>
+        </span>
+    </div>
+
+</div>
+<div th:if="${!studentPage.hasContent()}">
+    <p>No students found.</p>
+</div>
+</div>
+<div th:replace="~{fragments/footer :: page_footer}"></div>
+</body>
+</html>
